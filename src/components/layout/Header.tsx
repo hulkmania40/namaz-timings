@@ -1,26 +1,110 @@
+import { NavLink } from "react-router";
+import { Menu } from "lucide-react";
+
 import LocationDisplay from "../location/LocationDisplay";
 import ThemeToggle from "./ThemeToggle";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+const navItems = [
+  { label: "Today", to: "/" },
+  { label: "Settings", to: "/settings" },
+  { label: "About", to: "/about" },
+];
 
 export default function Header() {
   return (
-    <header className="border-b">
-      <div className="container mx-auto max-w-2xl px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center justify-between gap-2">
-          <div className="font-semibold text-base sm:text-lg">
+    <header className="border-b bg-background/80 backdrop-blur">
+      <div className="container mx-auto max-w-2xl px-4 py-3 space-y-2">
+        {/* Row 1: Brand + nav + theme / hamburger */}
+        <div className="flex items-center justify-between gap-3">
+          {/* Brand */}
+          <div className="font-semibold text-lg tracking-tight">
             Namaz Times
           </div>
-          <div className="sm:hidden">
+
+          {/* Desktop nav + theme */}
+          <div className="hidden sm:flex items-center gap-3">
+            <nav className="flex items-center gap-2 text-sm">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    [
+                      "px-3 py-1.5 rounded-full transition-colors",
+                      "border border-transparent",
+                      isActive
+                        ? "bg-muted text-foreground border-border font-medium"
+                        : "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+                    ].join(" ")
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
             <ThemeToggle />
+          </div>
+
+          {/* Mobile: theme + hamburger */}
+          <div className="sm:hidden flex items-center gap-2">
+            <ThemeToggle />
+            <MobileNav />
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-          <LocationDisplay className="flex-1 min-w-0" />
-          <div className="hidden sm:block shrink-0">
-            <ThemeToggle />
-          </div>
+        {/* Row 2: Location full width (no more overlap) */}
+        <div>
+          <LocationDisplay className="w-full" />
         </div>
       </div>
     </header>
+  );
+}
+
+function MobileNav() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Open menu"
+          className="shrink-0"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="flex flex-col">
+        <SheetHeader className="mb-4">
+          <SheetTitle>Menu</SheetTitle>
+        </SheetHeader>
+        <nav className="flex flex-col gap-2 text-sm">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                [
+                  "px-3 py-2 rounded-md",
+                  isActive
+                    ? "bg-muted text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ].join(" ")
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </SheetContent>
+    </Sheet>
   );
 }

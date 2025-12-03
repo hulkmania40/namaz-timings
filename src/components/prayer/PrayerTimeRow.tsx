@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { to12Hour } from '@/shared/shared'
 
 interface PrayerTimeRowProps {
   name: string
@@ -14,20 +15,6 @@ export function PrayerTimeRow({ name, time, isNext, isCurrent }: PrayerTimeRowPr
     : isNext
     ? 'bg-blue-100 dark:bg-blue-900/30'
     : 'hover:bg-muted/60 dark:hover:bg-muted/40'
-
-  function to12Hour(time: string): string {
-    const clean = time.split(" ")[0]
-    const [hStr, mStr] = clean.split(":")
-    let h = Number(hStr)
-    const m = Number(mStr)
-    if (isNaN(h) || isNaN(m)) return time
-
-    const suffix = h >= 12 ? "PM" : "AM"
-    h = h % 12
-    if (h === 0) h = 12
-
-    return `${h}:${m.toString().padStart(2, "0")} ${suffix}`
-  }
 
   return (
     <div

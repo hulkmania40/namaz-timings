@@ -84,18 +84,26 @@ export function usePrayerTimes(
         if (cancelled) return;
 
         const t: Record<string, string> | null = data?.timings ?? null;
-        setTimings(t);
+        // apply manual adjustments (minutes) before using timings
+        const adjustments: Record<string, number> = {
+          Dhuhr: 48,
+          Asr: 48,
+          Maghrib: 5,
+        };
+
+        const adjustedTimings = t ? applyAdjustments(t, adjustments) : null;
+        setTimings(adjustedTimings);
 
         const readable =
           data?.date?.readable ??
           (data?.meta?.timezone ? `Timezone: ${data.meta.timezone}` : null);
         setDateLabel(readable ?? null);
 
-        if (t) {
-          const np = computeNextPrayer(t);
+        if (adjustedTimings) {
+          const np = computeNextPrayer(adjustedTimings);
           setNextPrayer(np);
 
-          const cp = findCurrentPrayer(t);
+          const cp = findCurrentPrayer(adjustedTimings);
           setCurrentPrayer(cp);
         }
       } catch (err: any) {
@@ -204,4 +212,35 @@ function formatDuration(ms: number): string {
   const pad = (n: number) => n.toString().padStart(2, "0");
   if (hours > 0) return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   return `${pad(minutes)}:${pad(seconds)}`;
+}
+
+// helper to add minutes to specified prayer times
+function applyAdjustments(
+  timings: Record<string, string>,
+  adjustments: Record<string, number>
+): Record<string, string> {
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const result: Record<string, string> = { ...timings };
+
+  for (const key of Object.keys(adjustments)) {
+    const raw = timings[key];
+    if (!raw) continue;
+
+    const timePart = raw.split(" ")[0]; // "HH:MM"
+    const rest = raw.slice(timePart.length); // keep any suffix like timezone text
+    const [hStr, mStr] = timePart.split(":");
+    const h = Number(hStr);
+    const m = Number(mStr);
+    if (Number.isNaN(h) || Number.isNaN(m)) continue;
+
+    const dt = new Date();
+    dt.setSeconds(0, 0);
+    dt.setHours(h, m);
+    dt.setMinutes(dt.getMinutes() + adjustments[key]);
+
+    const newTime = `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+    result[key] = `${newTime}${rest}`;
+  }
+
+  return result;
 }

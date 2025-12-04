@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useLocation } from "../../context/LocationContext";
+import { toast } from "sonner";
 
 type NominatimResult = {
   place_id: number;
@@ -18,7 +19,7 @@ export function LocationSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
-  const { setLocationByName } = useLocation();
+  const { setLocation } = useLocation();
 
   const listRef = useRef<HTMLUListElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -86,7 +87,7 @@ export function LocationSearch() {
 
   const choose = (item: NominatimResult) => {
     // prefer using location context helper; pass display_name and coordinates
-    setLocationByName?.({
+    setLocation?.({
       // some LocationContext implementations accept string; others accept object.
       // pass an object with common fields — context can decide what to do.
       name: item.display_name,
@@ -108,7 +109,7 @@ export function LocationSearch() {
     if (activeIndex >= 0 && suggestions[activeIndex]) {
       choose(suggestions[activeIndex]);
     } else {
-      setLocationByName?.(query.trim() as any);
+      setLocation?.(query.trim() as any);
       setSuggestions([]);
       setActiveIndex(-1);
     }
@@ -173,7 +174,10 @@ export function LocationSearch() {
         </div>
       </form>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {/* {error && <div className="text-sm text-red-600">{error}</div>} */}
+      {
+        error && toast.error(error)
+      }
 
       {suggestions.length > 0 && (
         <ul

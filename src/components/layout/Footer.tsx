@@ -33,7 +33,7 @@ export default function Footer({ className, version }: Props) {
                 </div>
                 <div style={{ marginLeft: "auto", opacity: 0.9 }}>
                     <a
-                        href="https://github.com/ScriptSorcery/namaz-timings"
+                        href="https://github.com/hulkmania40/namaz-timings"
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ color: "inherit" }}

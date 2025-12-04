@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { usePrayerTimes, type Location } from '../../hooks/usePrayerTimes'
+import { to12Hour } from '@/shared/shared'
 
 type Props = {
   location?: Location
@@ -92,7 +93,7 @@ export function NextPrayerCountdown({ location, method, school }: Props) {
         <span className="font-medium">Next:</span>
         <span className="font-semibold">{nextPrayer.name}</span>
         <span className="font-mono text-xs text-muted-foreground">
-          ({nextPrayer.time})
+          ({to12Hour(nextPrayer.time)})
         </span>
       </div>
       <div className="text-xs sm:text-sm text-muted-foreground">

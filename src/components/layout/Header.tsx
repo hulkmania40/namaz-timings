@@ -14,7 +14,7 @@ import {
 
 const navItems = [
   { label: "Today", to: "/" },
-  { label: "Settings", to: "/settings" },
+  { label: "Ramzan Calendar", to: "/ramzan" },
   { label: "About", to: "/about" },
 ];
 
@@ -30,8 +30,8 @@ export default function Header() {
           </div>
 
           {/* Desktop nav + theme */}
-          <div className="hidden sm:flex items-center gap-3">
-            <nav className="items-center gap-2 text-sm hidden">
+          <div className="flex sm:flex items-center gap-3">
+            <nav className="flex items-center gap-2 text-sm">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -56,7 +56,7 @@ export default function Header() {
           {/* Mobile: theme + hamburger */}
           <div className="sm:hidden flex items-center gap-2">
             <ThemeToggle />
-            {/* <MobileNav /> */}
+            <MobileNav />
           </div>
         </div>
 
